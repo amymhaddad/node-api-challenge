@@ -4,11 +4,32 @@ router = express.Router()
 
 const Action = require("../data/helpers/actionModel")
 
+
 //Get an array of actions
 router.get("/", (req, res) => {
+    console.log("HERE in actions")
     Action.get()
     .then(action => {
-        console.log(action)
+        return res.status(200).json(action)
+    })
+    .catch(error => {
+        return res.status(500).json({ message: "Server error" })
+    })
+})
+
+//Get specific action
+router.get("/:actionId", (req, res) => {
+    const actionId = req.params.actionId
+
+    if (isNaN(actionId)) {
+        return res.status(404).json({ error: "Invalid syntax"})
+    }
+
+    Action.get(actionId)
+    .then(action => {
+        if (!action) {
+            return res.status(404).json({ error: "Action id is not found."})
+        }
         return res.status(200).json(action)
     })
     .catch(error => {
