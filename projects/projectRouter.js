@@ -34,6 +34,7 @@ router.get("/:projectId", (req, res) => {
     })
 })
 
+//check that I have all the correct checks here -- need to explicitly call Project.get(projectId)?
 router.put("/:projectId", (req, res) => {
     const projectId = req.params.projectId
     const name = req.body.name
@@ -62,6 +63,26 @@ router.put("/:projectId", (req, res) => {
     .catch(err => {
         console.log("err", err)
         return res.status(500).json({ error: "Server Error" })
+    })
+})
+
+router.post("/", (req, res) => {
+    const name = req.body.name
+    const description = req.body.description
+    const newProject = {name, description}
+
+    if (!name && !description) {
+        console.log("name", name)
+        return res.status(400).json({ message: "The name and description are required fields."})
+    }
+
+    Project.insert(newProject)
+    .then(project => {
+        console.log("project", project)
+        res.status(201).json(project)
+    })
+    .catch(err => {
+        console.log("err", err)
     })
 })
 
