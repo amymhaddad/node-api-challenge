@@ -49,17 +49,9 @@ router.put("/:projectId", [validateProjectId, validateProjectContent], (req, res
     })
 })
 
-router.post("/", (req, res) => {
-    const name = req.body.name
-    const description = req.body.description
-    const newProject = {name, description}
-
-    if (!name || !description) {
-        return res.status(400).json({ message: "The name and description are required fields."})
-    }
-    Project.insert(newProject)
+router.post("/", validateProjectContent, (req, res) => {
+    Project.insert(req.body)
     .then(project => {
-        console.log("project", project)
         res.status(201).json(project)
     })
     .catch(err => {
