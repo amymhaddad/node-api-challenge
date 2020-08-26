@@ -9,8 +9,10 @@ app.use(bodyParser.json());
 const port = 3000 
 
 const projectRouter = require("./projects/projectRouter")
+const actionRouter = require("./actions/actionRouter")
 
 app.use("/api/projects", projectRouter)
+app.use("/api/actions", actionRouter)
 
 app.get("/", (req, res) => {
     res.send("Hello")

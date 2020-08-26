@@ -3,8 +3,6 @@ const express = require("express")
 router = express.Router()
 
 const Project = require("../data/helpers/projectModel")
-const { response } = require("express")
-
 const {validateProjectId} = require("../middlewares/Middleware")
 const {validateProjectContent} = require("../middlewares/Middleware")
 
@@ -44,7 +42,6 @@ router.put("/:projectId", [validateProjectId, validateProjectContent], (req, res
         return res.status(201).json(req.body) 
     })
     .catch(err => {
-        console.log("err", err)
         return res.status(500).json({ error: "Server Error" })
     })
 })
@@ -62,7 +59,6 @@ router.post("/", validateProjectContent, (req, res) => {
 router.delete("/:projectId", validateProjectId, (req, res) => {
     Project.remove(req.params.projectId)
         .then(count => {
-            console.log("count", count)
             if (!count) {
                 return res.status(404).json({ error: "Project id is not found"})
             }

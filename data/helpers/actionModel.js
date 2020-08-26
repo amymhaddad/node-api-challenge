@@ -10,15 +10,19 @@ module.exports = {
 
 function get(id) {
   let query = db('actions');
-
+  //IF there's an id: return a query that matches the id
   if (id) {
+
     return query
       .where('id', id)
       .first()
       .then((action) => {
+        //Return the action asscoiated with the id 
         if (action) {
+          //If there's an action, the mapper function is used to return the action and it's completed status
           return mappers.actionToBody(action);
         } else {
+          //otherwise reutrn null 
           return null;
         }
       });
