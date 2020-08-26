@@ -3,6 +3,7 @@ const express = require("express")
 router = express.Router()
 
 const Project = require("../data/helpers/projectModel")
+const { response } = require("express")
 
 //Model is the class that gives you access the DB 
 
@@ -34,7 +35,6 @@ router.get("/:projectId", (req, res) => {
     })
 })
 
-//check that I have all the correct checks here -- need to explicitly call Project.get(projectId)?
 router.put("/:projectId", (req, res) => {
     const projectId = req.params.projectId
     const name = req.body.name
@@ -48,17 +48,15 @@ router.put("/:projectId", (req, res) => {
     if (!name || !description) {
         return res.status(400).json({ message: "The name and description are required fields."})
     }
-
+    //I don't need a separate check for Project.get(projectId) bc I'll get an empty project by default with 
+    //Project.update(projectId, changes) IF the id is not valid. Is this correct?
     Project.update(projectId, changes)
     .then(updatedProject => {
         if (!updatedProject) {
             return res.status(404).json({ error: "Project id is not found"})
         }
-        //Should I pull out the name and description to send back?
-        const updatedName = updatedProject.name
-        const udpatedDescription = updatedProject.description
-        const allUpdates = {updatedName, udpatedDescription}
-        return res.status(201).json(allUpdates) 
+        //Is this return ok?
+        return res.status(201).json(changes) 
     })
     .catch(err => {
         console.log("err", err)
@@ -71,8 +69,7 @@ router.post("/", (req, res) => {
     const description = req.body.description
     const newProject = {name, description}
 
-    if (!name && !description) {
-        console.log("name", name)
+    if (!name || !description) {
         return res.status(400).json({ message: "The name and description are required fields."})
     }
 
@@ -82,8 +79,27 @@ router.post("/", (req, res) => {
         res.status(201).json(project)
     })
     .catch(err => {
-        console.log("err", err)
+        return res.status(500).json({ error: "Server error "})
     })
+})
+
+router.delete("/:postId", (req, res) => {
+    const postId = req.params.postId
+
+    if (isNaN(postId)) {
+        return res.status(400).json({ message: "Invalid syntax"})
+    }
+
+    Project.remove(postId)
+        .then(count => {
+            if (!count) {
+                return res.status(404).json({ error: "Project id is not found"})
+            }
+            return res.sendStatus(204);
+        })
+        .catch(err => {
+            return res.status(500).json({ error: "Server error "})
+    }) 
 })
 
 
