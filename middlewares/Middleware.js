@@ -1,4 +1,4 @@
-const { orWhereNotExists } = require("../data/dbConfig")
+// const { orWhereNotExists } = require("../data/dbConfig")
 
 
 module.exports = {
@@ -11,6 +11,7 @@ function validateProjectId(req, res, next) {
     if (isNaN(projectId)) {
         return res.status(400).json({ message: "Invalid syntax"})
     }
+    console.log("HERE", projectId)
     next()
 }
 

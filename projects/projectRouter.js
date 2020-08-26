@@ -59,15 +59,10 @@ router.post("/", validateProjectContent, (req, res) => {
     })
 })
 
-router.delete("/:postId", (req, res) => {
-    const postId = req.params.postId
-
-    if (isNaN(postId)) {
-        return res.status(400).json({ message: "Invalid syntax"})
-    }
-
-    Project.remove(postId)
+router.delete("/:projectId", validateProjectId, (req, res) => {
+    Project.remove(req.params.projectId)
         .then(count => {
+            console.log("count", count)
             if (!count) {
                 return res.status(404).json({ error: "Project id is not found"})
             }
