@@ -5,8 +5,10 @@ router = express.Router()
 const Project = require("../data/helpers/projectModel")
 const { response } = require("express")
 
-//Model is the class that gives you access the DB 
+const {validateProjectId} = require("../middlewares/Middleware")
 
+
+//Model is the class that gives you access the DB 
 router.get("/", (req, res) => {
     Project.get()
     .then(projects => {
@@ -19,31 +21,24 @@ router.get("/", (req, res) => {
 
 //The result of this req includes "actions" for each project
 //Not sure why bc "actions" is not a column in the table. BUT it seems to be getting applied from the mappers function
-router.get("/:projectId", (req, res) => {
-    const projectId = req.params.projectId
-
-    if (isNaN(projectId)) {
-        return res.status(400).json({ message: "Invalid syntax"})
-    }
-    Project.get(projectId)
+router.get("/:projectId", validateProjectId, (req, res) => {
+    Project.get(req.params.projectId)
     .then(project => {
+        if (!project) {
+            return res.status(404).json({ error: "Project id is not found."})
+        }
         return res.status(200).json(project)
     })
     .catch(error => {
-        console.log("err", error)
         return res.status(500).json({ error: "Server Error" })
     })
 })
 
-router.put("/:projectId", (req, res) => {
+router.put("/:projectId", validateProjectId, (req, res) => {
     const projectId = req.params.projectId
     const name = req.body.name
     const description = req.body.description
     const changes = {name, description}
-
-    if (isNaN(projectId)) {
-        return res.status(400).json({ message: "Invalid syntax"})
-    }
 
     if (!name || !description) {
         return res.status(400).json({ message: "The name and description are required fields."})
@@ -72,7 +67,6 @@ router.post("/", (req, res) => {
     if (!name || !description) {
         return res.status(400).json({ message: "The name and description are required fields."})
     }
-
     Project.insert(newProject)
     .then(project => {
         console.log("project", project)
@@ -101,7 +95,5 @@ router.delete("/:postId", (req, res) => {
             return res.status(500).json({ error: "Server error "})
     }) 
 })
-
-
 
 module.exports = router;
