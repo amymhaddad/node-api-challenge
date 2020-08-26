@@ -6,6 +6,7 @@ const Project = require("../data/helpers/projectModel")
 const { response } = require("express")
 
 const {validateProjectId} = require("../middlewares/Middleware")
+// const 
 
 
 //Model is the class that gives you access the DB 
@@ -40,18 +41,17 @@ router.put("/:projectId", validateProjectId, (req, res) => {
     const description = req.body.description
     const changes = {name, description}
 
+    console.log("body", req.body)
     if (!name || !description) {
         return res.status(400).json({ message: "The name and description are required fields."})
     }
-    //I don't need a separate check for Project.get(projectId) bc I'll get an empty project by default with 
-    //Project.update(projectId, changes) IF the id is not valid. Is this correct?
-    Project.update(projectId, changes)
+   
+    Project.update(req.params.projectId, req.body)
     .then(updatedProject => {
         if (!updatedProject) {
             return res.status(404).json({ error: "Project id is not found"})
         }
-        //Is this return ok?
-        return res.status(201).json(changes) 
+        return res.status(201).json(req.body) 
     })
     .catch(err => {
         console.log("err", err)
