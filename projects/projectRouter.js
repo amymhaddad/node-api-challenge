@@ -6,7 +6,7 @@ const Project = require("../data/helpers/projectModel")
 const { response } = require("express")
 
 const {validateProjectId} = require("../middlewares/Middleware")
-// const 
+const {validateProjectContent} = require("../middlewares/Middleware")
 
 
 //Model is the class that gives you access the DB 
@@ -35,17 +35,7 @@ router.get("/:projectId", validateProjectId, (req, res) => {
     })
 })
 
-router.put("/:projectId", validateProjectId, (req, res) => {
-    const projectId = req.params.projectId
-    const name = req.body.name
-    const description = req.body.description
-    const changes = {name, description}
-
-    console.log("body", req.body)
-    if (!name || !description) {
-        return res.status(400).json({ message: "The name and description are required fields."})
-    }
-   
+router.put("/:projectId", [validateProjectId, validateProjectContent], (req, res) => {
     Project.update(req.params.projectId, req.body)
     .then(updatedProject => {
         if (!updatedProject) {

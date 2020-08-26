@@ -21,4 +21,5 @@ function validateProjectContent(req, res, next) {
     if (!name || !description) {
         return res.status(400).json({ message: "The name and description are required fields."})
     }
+    next()
 }
