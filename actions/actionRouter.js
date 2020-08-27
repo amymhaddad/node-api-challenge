@@ -3,6 +3,7 @@ const express = require("express")
 router = express.Router()
 
 const Action = require("../data/helpers/actionModel")
+const {validateActionId} = require("../middlewares/Middleware")
 
 
 //Get an array of actions
@@ -18,14 +19,9 @@ router.get("/", (req, res) => {
 })
 
 //Get specific action
-router.get("/:actionId", (req, res) => {
-    const actionId = req.params.actionId
+router.get("/:actionId", validateActionId, (req, res) => {
 
-    if (isNaN(actionId)) {
-        return res.status(404).json({ error: "Invalid syntax"})
-    }
-
-    Action.get(actionId)
+    Action.get(req.params.actionId)
     .then(action => {
         if (!action) {
             return res.status(404).json({ error: "Action id is not found."})
@@ -36,6 +32,14 @@ router.get("/:actionId", (req, res) => {
         return res.status(500).json({ message: "Server error" })
     })
 })
+
+// router.put("/:actionId", (req, res) => {
+//     const actionId = req.params.actionId
+
+//     if (isNaN(actionId)) {
+//         return res.status(404).json({ error: "Invalid syntax"})
+//     }
+
 
 
 

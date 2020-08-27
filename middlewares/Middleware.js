@@ -4,7 +4,8 @@
 module.exports = {
     validateProjectId,
     validateProjectContent, 
-    validateAction
+    validateAction,
+    validateActionId
 }
 
 function validateProjectId(req, res, next) {
@@ -30,6 +31,15 @@ function validateAction(req, res, next) {
 
     if (missingActionDetails) {
         return res.status(404).json({ error: "You must provide notes, project id, and a description"})
+    }
+    next()
+}
+
+function validateActionId(req, res, next) {
+    const actionId = req.params.actionId
+
+    if (isNaN(actionId)) {
+        return res.status(404).json({ error: "Invalid syntax"})
     }
     next()
 }
