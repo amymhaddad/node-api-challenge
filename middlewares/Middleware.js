@@ -6,7 +6,7 @@ module.exports = {
     validateProjectContent, 
     validateAction,
     validateActionId,
-    validateActionContent
+    validateActionUpdate
 }
 
 
@@ -25,11 +25,9 @@ function validateProjectId(req, res, next) {
     next()
 }
 
-//Unclear why I have to update both the name and the description -- why can't I just update 1 of them?
-//Unclear !req.body.name && !req.body.description syntax works -- EVEN if I only provide 1 of the fields
-//I should be able to do: !req.body.name || !req.body.description
 function validateProjectUpdate(req, res, next) {
-    if (!req.body) 
+    //When both are false this error will generate (ie: you can do a put on 1 or both fields. BUT if both are empty, you get an error)
+    if (!req.body.name && !req.body.description)
         return res.status(400).json({ error: "You need to provide a name or description."})
     next()
 }
@@ -56,8 +54,8 @@ function validateActionId(req, res, next) {
 }
 
 //Unclear why I have to update both the notes and the description -- why can't I just update 1 of them?
-function validateActionContent(req, res, next) {
+function validateActionUpdate(req, res, next) {
     if (!req.body.notes || !req.body.description)
-        return res.status(400).json({ error: "You must provide notes or a description"})
+        return res.status(400).json({ error: "You must provide notes and a description"})
     next()
 }

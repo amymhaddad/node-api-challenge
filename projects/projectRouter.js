@@ -30,7 +30,7 @@ router.get("/:projectId", validateProjectId, (req, res) => {
     })
 })
 
-//See notes in MW
+//See notes in MW for questions
 router.put("/:projectId", [validateProjectId, validateProjectUpdate], (req, res) => {
     Project.update(req.params.projectId, req.body)
     .then(updatedProject => {
@@ -80,7 +80,6 @@ router.get("/:projectId/actions", validateProjectId, (req, res) => {
     }) 
 
 })
-
 
 //project_id MUST be part of the body, which seems strange?
 //I must include the project_id in order to add a new action for a project. But that seems strange bc the project_id comes through the url

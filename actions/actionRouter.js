@@ -3,7 +3,7 @@ const express = require("express")
 router = express.Router()
 
 const Action = require("../data/helpers/actionModel")
-const {validateActionId, validateActionContent} = require("../middlewares/Middleware")
+const {validateActionId, validateActionUpdate} = require("../middlewares/Middleware")
 
 //Qusetion: project_id is required for an action. Are my current checks on the put req enough to qualify for this requirement?
 
@@ -31,7 +31,7 @@ router.get("/:actionId", validateActionId, (req, res) => {
     })
 })
 
-router.put("/:actionId", [validateActionId, validateActionContent], (req, res) => {
+router.put("/:actionId", [validateActionId, validateActionUpdate], (req, res) => {
     Action.update(req.params.actionId, req.body)
     .then(updatedAction => {
         if (!updatedAction) 
