@@ -7,8 +7,6 @@ const Action = require("../data/helpers/actionModel")
 const {validateProjectId, validateProjectContent} = require("../middlewares/Middleware")
 
 
-//My console statemetns are no longer getting printed when I run my endpoints 
-
 //Model is the class that gives you access the DB 
 router.get("/", (req, res) => {
     Project.get()
@@ -69,6 +67,26 @@ router.delete("/:projectId", validateProjectId, (req, res) => {
     }) 
 })
 
+
+router.get("/:projectId/actions", (req, res) => {
+
+    const projectId = req.params.projectId
+
+    Project.get(projectId)
+    .then(project => {
+        if (!project) {
+            return res.status(404).json({ error: "Project id is not found"})
+        }
+        Action.get()
+        .then(actions => {
+            res.status(200).json(actions)
+        })
+    })
+    .catch(err => {
+        return res.status(500).json({ error: "Server error "})
+}) 
+
+})
 
 
 
