@@ -9,7 +9,6 @@ const {validateActionId, validateActionContent} = require("../middlewares/Middle
 
 //Get an array of actions
 router.get("/", (req, res) => {
-    console.log("HERE in actions")
     Action.get()
     .then(action => {
         return res.status(200).json(action)
@@ -23,9 +22,8 @@ router.get("/", (req, res) => {
 router.get("/:actionId", validateActionId, (req, res) => {
     Action.get(req.params.actionId)
     .then(action => {
-        if (!action) {
+        if (!action)
             return res.status(404).json({ error: "Action id is not found."})
-        }
         return res.status(200).json(action)
     })
     .catch(error => {
@@ -45,8 +43,4 @@ router.put("/:actionId", [validateActionId, validateActionContent], (req, res) =
     })
 })
 
-
-
-
-//Update to MW and Post in project router
 module.exports = router;

@@ -86,12 +86,13 @@ router.get("/:projectId/actions", validateProjectId, (req, res) => {
 
 
 //project_id MUST be part of the body, which seems strange?
+//I must include the project_id in order to add a new action for a project. But that seems strange bc the project_id comes through the url
 router.post("/:projectId/actions", [validateProjectId, validateAction], (req, res) => {
+
     Project.get(req.params.projectId)
     .then(project => {
-        if (!project) {
+        if (!project) 
             return res.status(404).json({ error: "Project id is not found"})
-        }
         Action.insert(req.body, req.params.projectId)
         .then(action => {
             res.status(201).json(req.body)

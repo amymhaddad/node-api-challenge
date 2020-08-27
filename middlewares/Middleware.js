@@ -1,12 +1,20 @@
-// const { orWhereNotExists } = require("../data/dbConfig")
-
 
 module.exports = {
+    logger,
     validateProjectId,
     validateProjectContent, 
     validateAction,
     validateActionId,
     validateActionContent
+}
+
+
+function logger(req, res, next) {
+    let date = `Date: ${Date.now()}`
+    let method = `Method: ${req.method}\n`
+    let url = `URL: ${req.url}\n`
+    console.log(date, method, url)
+    next()
 }
 
 function validateProjectId(req, res, next) {
@@ -17,21 +25,19 @@ function validateProjectId(req, res, next) {
     next()
 }
 
+//Unclear why I have to update both the name and the description -- why can't I just update 1 of them?
 function validateProjectContent(req, res, next) {
-    const name = req.body.name
-    const description = req.body.description
-
-    if (!name || !description) {
-        return res.status(400).json({ message: "The name and description are required fields."})
+    if (!req.body.name || !req.body.description) {
+        return res.status(400).json({ error: "You need to provide a name or description."})
     }
     next()
 }
 
 function validateAction(req, res, next) {
-    const missingActionDetails = !req.body.project_id || !req.body.notes || !req.body.description
+    const missingActionDetails =  !req.body.notes && !req.body.description
 
     if (missingActionDetails) {
-        return res.status(404).json({ error: "You must provide notes, project id, and a description"})
+        return res.status(404).json({ error: "You must provide notes and a description"})
     }
     next()
 }
@@ -39,15 +45,14 @@ function validateAction(req, res, next) {
 function validateActionId(req, res, next) {
     const actionId = req.params.actionId
 
-    if (isNaN(actionId)) {
+    if (isNaN(actionId))
         return res.status(404).json({ error: "Invalid syntax"})
-    }
     next()
 }
 
+//Unclear why I have to update both the notes and the description -- why can't I just update 1 of them?
 function validateActionContent(req, res, next) {
-    if (!req.body.notes || !req.body.description) {
+    if (!req.body.notes || !req.body.description)
         return res.status(400).json({ error: "You must provide notes or a description"})
-    }
     next()
 }
