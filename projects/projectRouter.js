@@ -67,7 +67,7 @@ router.delete("/:projectId", validateProjectId, (req, res) => {
     }) 
 })
 
-
+//add MW
 router.get("/:projectId/actions", (req, res) => {
 
     const projectId = req.params.projectId
@@ -84,45 +84,37 @@ router.get("/:projectId/actions", (req, res) => {
     })
     .catch(err => {
         return res.status(500).json({ error: "Server error "})
-}) 
+    }) 
 
 })
 
 
+//project_id MUST be part of the body, which seems strange?
+router.post("/:projectId/actions", (req, res) => {
+    const projectId = req.params.projectId
+    const missingActionDetails = !req.body.project_id || !req.body.notes || !req.body.description
 
-
-//Add a new action -- HERE
-router.post("/:actionId/projects", (req, res) => {
-    const actionId = req.params.actionId
-    const name = req.body.name
-    const description = req.body.description
-
-    if (isNaN(actionId)) {
-        return res.status(404).json({ error: "Invalid syntax"})
+    if (isNaN(projectId)) {
+        return res.status(400).json({ error: "Invalid syntax"})
     }
 
-    if (!name || !description) {
-        return res.status(404).json({ error: "Invalid syntax"})
+    if (missingActionDetails) {
+        return res.status(404).json({ error: "You must provide notes, project id, and a description"})
     }
 
-    Action.get(actionId)
+    Project.get(projectId)
     .then(project => {
-        console.log("project", project)
         if (!project) {
-            return res.status(404).json({ error: "Action id is not valid"})
+            return res.status(404).json({ error: "Project id is not found"})
         }
-    Project.insert(req.body)  
-    .then(newAction => {
-        console.log("NEW", newAction)
-        return res.status(201).json(req.body)
+        Action.insert(req.body, projectId)
+        .then(action => {
+            res.status(201).json(req.body)
         })
     })
     .catch(error => {
-        console.log("ERR", error)
             return res.status(500).json({ message: "Server error" })
         })
-
-
 })
 
 
