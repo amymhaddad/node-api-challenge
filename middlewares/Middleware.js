@@ -3,7 +3,8 @@
 
 module.exports = {
     validateProjectId,
-    validateProjectContent
+    validateProjectContent, 
+    validateAction
 }
 
 function validateProjectId(req, res, next) {
@@ -20,6 +21,15 @@ function validateProjectContent(req, res, next) {
 
     if (!name || !description) {
         return res.status(400).json({ message: "The name and description are required fields."})
+    }
+    next()
+}
+
+function validateAction(req, res, next) {
+    const missingActionDetails = !req.body.project_id || !req.body.notes || !req.body.description
+
+    if (missingActionDetails) {
+        return res.status(404).json({ error: "You must provide notes, project id, and a description"})
     }
     next()
 }

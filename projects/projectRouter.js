@@ -4,7 +4,7 @@ router = express.Router()
 
 const Project = require("../data/helpers/projectModel")
 const Action = require("../data/helpers/actionModel")
-const {validateProjectId, validateProjectContent} = require("../middlewares/Middleware")
+const {validateProjectId, validateProjectContent, validateAction} = require("../middlewares/Middleware")
 
 
 //Model is the class that gives you access the DB 
@@ -67,12 +67,8 @@ router.delete("/:projectId", validateProjectId, (req, res) => {
     }) 
 })
 
-//add MW
-router.get("/:projectId/actions", (req, res) => {
-
-    const projectId = req.params.projectId
-
-    Project.get(projectId)
+router.get("/:projectId/actions", validateProjectId, (req, res) => {
+    Project.get(req.params.projectId)
     .then(project => {
         if (!project) {
             return res.status(404).json({ error: "Project id is not found"})
@@ -90,24 +86,13 @@ router.get("/:projectId/actions", (req, res) => {
 
 
 //project_id MUST be part of the body, which seems strange?
-router.post("/:projectId/actions", (req, res) => {
-    const projectId = req.params.projectId
-    const missingActionDetails = !req.body.project_id || !req.body.notes || !req.body.description
-
-    if (isNaN(projectId)) {
-        return res.status(400).json({ error: "Invalid syntax"})
-    }
-
-    if (missingActionDetails) {
-        return res.status(404).json({ error: "You must provide notes, project id, and a description"})
-    }
-
-    Project.get(projectId)
+router.post("/:projectId/actions", [validateProjectId, validateAction], (req, res) => {
+    Project.get(req.params.projectId)
     .then(project => {
         if (!project) {
             return res.status(404).json({ error: "Project id is not found"})
         }
-        Action.insert(req.body, projectId)
+        Action.insert(req.body, req.params.projectId)
         .then(action => {
             res.status(201).json(req.body)
         })
