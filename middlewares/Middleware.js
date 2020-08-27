@@ -2,6 +2,7 @@
 module.exports = {
     logger,
     validateProjectId,
+    validateProjectUpdate,
     validateProjectContent, 
     validateAction,
     validateActionId,
@@ -19,32 +20,36 @@ function logger(req, res, next) {
 
 function validateProjectId(req, res, next) {
     const projectId = req.params.projectId
-    if (isNaN(projectId)) {
+    if (isNaN(projectId)) 
         return res.status(400).json({ message: "Invalid syntax"})
-    }
     next()
 }
 
 //Unclear why I have to update both the name and the description -- why can't I just update 1 of them?
-function validateProjectContent(req, res, next) {
-    if (!req.body.name || !req.body.description) {
+//Unclear !req.body.name && !req.body.description syntax works -- EVEN if I only provide 1 of the fields
+//I should be able to do: !req.body.name || !req.body.description
+function validateProjectUpdate(req, res, next) {
+    if (!req.body) 
         return res.status(400).json({ error: "You need to provide a name or description."})
+    next()
+}
+
+function validateProjectContent(req, res, next) {
+    if (!req.body.name && !req.body.description) {
+        return res.status(400).json({ error: "You need to provide a name and description."})
     }
     next()
 }
 
 function validateAction(req, res, next) {
     const missingActionDetails =  !req.body.notes && !req.body.description
-
-    if (missingActionDetails) {
+    if (missingActionDetails)
         return res.status(404).json({ error: "You must provide notes and a description"})
-    }
     next()
 }
 
 function validateActionId(req, res, next) {
     const actionId = req.params.actionId
-
     if (isNaN(actionId))
         return res.status(404).json({ error: "Invalid syntax"})
     next()
