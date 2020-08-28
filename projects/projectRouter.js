@@ -30,7 +30,7 @@ router.get("/:projectId", validateProjectId, (req, res) => {
     })
 })
 
-//See notes in MW for questions
+
 router.put("/:projectId", [validateProjectId, validateProjectUpdate], (req, res) => {
     Project.update(req.params.projectId, req.body)
     .then(updatedProject => {
@@ -90,7 +90,7 @@ router.post("/:projectId/actions", [validateProjectId, validateAction], (req, re
             return res.status(404).json({ error: "Project id is not found"})
         Action.insert(req.body, req.params.projectId)
         .then(action => {
-            res.status(201).json(req.body)
+            return res.status(201).json(action)
         })
     })
     .catch(error => {
