@@ -55,9 +55,9 @@ router.delete('/:actionId', validateActionId, (req, res) => {
 });
 
 router.post('/', [validateActionProjectId, validateAction], (req, res) => {
-	const action = req.body
-	console.group("IN post", req.body.project_id)
-
+	//Req's of action table: project_id, notes, descrition
+	//SO first, I see if the project_id exists in DB
+	//THEN I insert the body of the req into the actions table
 	Action.get(req.body.project_id)
 	.then(action => {
 		if (!action) {

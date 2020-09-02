@@ -8,11 +8,16 @@ app.use(bodyParser.json());
 
 const projectRouter = require('./projects/projectRouter');
 const actionRouter = require('./actions/actionRouter');
-const { logger } = require('./middlewares/Middleware');
+
+//added handleError from MW
+const { logger, handleErrors } = require('./middlewares/Middleware');
 
 app.use(logger);
 app.use('/api/projects', projectRouter);
 app.use('/api/actions', actionRouter);
+
+//Added use of handleError
+app.use(handleErrors)
 
 app.get('/', (req, res) => {
 	res.send('Hello');

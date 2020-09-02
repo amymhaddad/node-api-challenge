@@ -17,21 +17,26 @@ router.get('/', (req, res) => {
 		.then((projects) => {
 			return res.status(200).json(projects);
 		})
+	
 		.catch((error) => {
 			return res.status(500).json({ error: 'Server Error' });
 		});
 });
 
 //Get a particular project
-router.get('/:projectId', validateProjectId, (req, res) => {
+router.get('/:projectId', validateProjectId, (req, res, next) => {
 	Project.get(req.params.projectId)
 		.then((project) => {
 			if (!project) return res.status(404).json({ error: 'Project id is not found.' });
-			return res.status(200).json(project);
+				return res.status(200).json(project);
 		})
-		.catch((error) => {
-			return res.status(500).json({ error: 'Server Error' });
-		});
+		
+		// let err = new Error
+		// err.statusCode = 500
+		// next(err)
+		// .catch((error) => {
+		// 	return res.status(500).json({ error: 'Server Error' });
+		// });
 });
 
 //Update a project
@@ -99,5 +104,6 @@ router.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, 
 			return res.status(500).json({ message: 'Server error' });
 		});
 });
+
 
 module.exports = router;
