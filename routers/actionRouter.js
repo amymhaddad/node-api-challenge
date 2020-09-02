@@ -1,5 +1,4 @@
 const express = require('express');
-
 router = express.Router();
 
 const Action = require('../data/helpers/actionModel');
@@ -7,6 +6,7 @@ const { validateActionId, validateActionUpdate, validateAction, validateActionPr
 
 //Get an array of actions
 router.get('/', (req, res) => {
+	console.log("HERE")
 	Action.get()
 		.then((action) => {
 			return res.status(200).json(action);
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 });
 
 //Get specific action
-router.get('/:actionId', validateActionId, (req, res) => {
+router.get('/:actionId', (req, res) => {
 
 	Action.get(req.params.actionId)
 		.then((action) => {

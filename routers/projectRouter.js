@@ -1,5 +1,4 @@
 const express = require('express');
-
 router = express.Router();
 
 const Project = require('../data/helpers/projectModel');
@@ -11,20 +10,25 @@ const {
 	validateAction
 } = require('../middlewares/Middleware');
 
+//Not working and unsure why. I get this response: "error": "Invalid syntax" which means the middleware must be runing on this endpoint, but it shouldt be 
 //Get all projects
 router.get('/', (req, res) => {
+	console.log("HERE")
 	Project.get()
 		.then((projects) => {
+			console.log("HERE")
 			return res.status(200).json(projects);
 		})
 	
 		.catch((error) => {
+			console.log("ERR", error)
 			return res.status(500).json({ error: 'Server Error' });
 		});
 });
 
 //Get a particular project
 router.get('/:projectId', validateProjectId, (req, res, next) => {
+	console.log("HERE in second endpoint")
 	Project.get(req.params.projectId)
 		.then((project) => {
 			if (!project) return res.status(404).json({ error: 'Project id is not found.' });

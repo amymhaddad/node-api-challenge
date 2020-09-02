@@ -50,9 +50,10 @@ function validateAction(req, res, next) {
 }
 
 function validateActionId(req, res, next) {
+	console.log(req)
 	const actionId = req.params.actionId;
 	if (isNaN(actionId)) 
-		return res.status(404).json({ error: 'Invalid syntax' });
+		return res.status(404).json({ error: 'Invalid syntax validate action id' });
 	next();
 }
 
@@ -60,7 +61,7 @@ function validateActionProjectId(req, res, next) {
 	const actionProjectId = req.body.project_id
 
 	if (isNaN(actionProjectId)) 
-		return res.status(404).json({ error: 'Invalid syntax' });
+		return res.status(404).json({ error: 'Invalid syntax validate action project id' });
 	next();
 
 }
