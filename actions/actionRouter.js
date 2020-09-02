@@ -3,7 +3,7 @@ const express = require('express');
 router = express.Router();
 
 const Action = require('../data/helpers/actionModel');
-const { validateActionId, validateActionUpdate } = require('../middlewares/Middleware');
+const { validateActionId, validateActionUpdate, validateAction, validateActionProjectId } = require('../middlewares/Middleware');
 
 //Get an array of actions
 router.get('/', (req, res) => {
@@ -18,6 +18,7 @@ router.get('/', (req, res) => {
 
 //Get specific action
 router.get('/:actionId', validateActionId, (req, res) => {
+
 	Action.get(req.params.actionId)
 		.then((action) => {
 			if (!action) return res.status(404).json({ error: 'Action id is not found.' });
@@ -44,12 +45,35 @@ router.put('/:actionId', [ validateActionId, validateActionUpdate ], (req, res) 
 router.delete('/:actionId', validateActionId, (req, res) => {
 	Action.remove(req.params.actionId)
 		.then((count) => {
-			if (!count) return res.status(404).json({ error: 'Action id is not found.' });
+			if (!count) 
+				return res.status(404).json({ error: 'Action id is not found.' });
 			return res.status(204).json('removed');
 		})
 		.catch((error) => {
 			return res.status(500).json({ message: 'Server error' });
 		});
+});
+
+router.post('/', [validateActionProjectId, validateAction], (req, res) => {
+	const action = req.body
+	console.group("IN post", req.body.project_id)
+
+	Action.get(req.body.project_id)
+	.then(action => {
+		if (!action) {
+			return res.status(404).json({ error: 'Action id is not found.' });
+		}
+		Action.insert(req.body)
+		.then(newAction => {
+			return res.status(201).json(newAction)
+		})
+
+	.catch((error) => {
+		console.log("err", error)
+		return res.status(500).json({ message: 'Server error' });
+	});
+	})
+
 });
 
 module.exports = router;

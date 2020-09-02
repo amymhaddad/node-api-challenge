@@ -5,7 +5,8 @@ module.exports = {
 	validateProjectContent,
 	validateAction,
 	validateActionId,
-	validateActionUpdate
+	validateActionUpdate,
+	validateActionProjectId
 };
 
 function logger(req, res, next) {
@@ -49,14 +50,24 @@ function validateAction(req, res, next) {
 
 function validateActionId(req, res, next) {
 	const actionId = req.params.actionId;
-
-	if (isNaN(actionId)) return res.status(404).json({ error: 'Invalid syntax' });
+	if (isNaN(actionId)) 
+		return res.status(404).json({ error: 'Invalid syntax' });
 	next();
+}
+
+function validateActionProjectId(req, res, next) {
+	const actionProjectId = req.body.project_id
+	console.log("ActionProjectID", actionProjectId)
+	if (isNaN(actionProjectId)) 
+		return res.status(404).json({ error: 'Invalid syntax' });
+	next();
+
 }
 
 function validateActionUpdate(req, res, next) {
 	const missingActionDetails = !req.body.notes && !req.body.description;
 
-	if (missingActionDetails) return res.status(400).json({ error: 'You must provide notes or a description' });
+	if (missingActionDetails) 
+		return res.status(400).json({ error: 'You must provide notes or a description' });
 	next();
 }

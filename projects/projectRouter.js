@@ -72,7 +72,8 @@ router.delete('/:projectId', validateProjectId, (req, res) => {
 router.get('/:projectId/actions', validateProjectId, (req, res) => {
 	Project.get(req.params.projectId)
 		.then((project) => {
-			if (!project) return res.status(404).json({ error: 'Project id is not found' });
+			if (!project) 
+				return res.status(404).json({ error: 'Project id is not found' });
 			Action.get().then((actions) => {
 				res.status(200).json(actions);
 			});
@@ -87,8 +88,10 @@ router.get('/:projectId/actions', validateProjectId, (req, res) => {
 router.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res) => {
 	Project.get(req.params.projectId)
 		.then((project) => {
-			if (!project) return res.status(404).json({ error: 'Project id is not found' });
-			Action.insert(req.body, req.params.projectId).then((action) => {
+			if (!project) 
+				return res.status(404).json({ error: 'Project id is not found' });
+			Action.insert(req.body, req.params.projectId)
+				.then((action) => {
 				return res.status(201).json(action);
 			});
 		})
