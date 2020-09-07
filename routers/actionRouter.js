@@ -1,11 +1,11 @@
 const express = require('express');
-router = express.Router();
+const actionRouter = express.Router();
 
 const Action = require('../data/helpers/actionModel');
 const { validateActionId, validateActionUpdate, validateAction, validateActionProjectId } = require('../middlewares/Middleware');
 
 //Get an array of actions
-router.get('/', (req, res) => {
+actionRouter.get('/', (req, res) => {
 	console.log("HERE in actions")
 	Action.get()
 		.then((action) => {
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 });
 
 //Get specific action
-router.get('/:actionId', (req, res) => {
+actionRouter.get('/:actionId', (req, res) => {
 	
 	Action.get(req.params.actionId)
 		.then((action) => {
@@ -30,7 +30,7 @@ router.get('/:actionId', (req, res) => {
 });
 
 //Update an action
-router.put('/:actionId', [ validateActionId, validateActionUpdate ], (req, res) => {
+actionRouter.put('/:actionId', [ validateActionId, validateActionUpdate ], (req, res) => {
 	Action.update(req.params.actionId, req.body)
 		.then((updatedAction) => {
 			if (!updatedAction) return res.status(404).json({ error: 'Action id is not found.' });
@@ -42,7 +42,7 @@ router.put('/:actionId', [ validateActionId, validateActionUpdate ], (req, res) 
 });
 
 //delete an action
-router.delete('/:actionId', validateActionId, (req, res) => {
+actionRouter.delete('/:actionId', validateActionId, (req, res) => {
 	Action.remove(req.params.actionId)
 		.then((count) => {
 			if (!count) 
@@ -54,7 +54,7 @@ router.delete('/:actionId', validateActionId, (req, res) => {
 		});
 });
 
-router.post('/', [validateActionProjectId, validateAction], (req, res) => {
+actionRouter.post('/', [validateActionProjectId, validateAction], (req, res) => {
 	//Req's of action table: project_id, notes, descrition
 	//SO first, I see if the project_id exists in DB
 	//THEN I insert the body of the req into the actions table
@@ -76,4 +76,4 @@ router.post('/', [validateActionProjectId, validateAction], (req, res) => {
 
 });
 
-module.exports = router;
+module.exports = actionRouter;

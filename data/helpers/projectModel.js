@@ -9,6 +9,7 @@ module.exports = {
   getProjectActions
 };
 
+//get(id) ==> updating the table BUT .catch() will only catch a prmoise error. However if I update get(id) to get(i) then I'm updating the TABLE, which will generate an error BEFORE the promise is even hit
 function get(id) {
   let query = db("projects as p");
   //If there's an id, get the first matching id

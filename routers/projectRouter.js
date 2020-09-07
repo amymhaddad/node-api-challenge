@@ -1,5 +1,6 @@
 const express = require('express');
-router = express.Router();
+const projectRouter = express.Router();
+//Watch for naming conflicts so my router doesn't get overwritten
 
 const Project = require('../data/helpers/projectModel');
 const Action = require('../data/helpers/actionModel');
@@ -10,30 +11,21 @@ const {
 	validateAction
 } = require('../middlewares/Middleware');
 
-//Check get() for projects and actions
-//Check endpoint: router.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res) => {
-	//Should this go into the actions file?
 
-
-//Get error when try to hit this endpoint: http://localhost:3000/api/projects
-//http://localhost:3000/api --> goes to actions 
-//However, I can get a single project when I pass in an ID
-//Get all projects
-router.get('/', (req, res) => {
-	console.log("HERE asdf")
+projectRouter.get('/', (req, res, next) => {
 	Project.get()
 		.then((projects) => {
 			return res.status(200).json(projects);
 		})
-	
-		.catch((error) => {
-			console.log("ERR", error)
-			return res.status(500).json({ error: 'Server Error' });
-		});
+		.catch(err => next(err))
+		// .catch((error) => {
+		// 	console.log("ERR", error)
+		// 	return res.status(500).json({ error: 'Server Error' });
+		// });
 });
 
 //Get a particular project
-router.get('/:projectId', validateProjectId, (req, res, next) => {
+projectRouter.get('/:projectId', validateProjectId, (req, res, next) => {
 	console.log("HERE in second endpoint")
 	Project.get(req.params.projectId)
 		.then((project) => {
@@ -47,7 +39,7 @@ router.get('/:projectId', validateProjectId, (req, res, next) => {
 });
 
 //Update a project
-router.put('/:projectId', [ validateProjectId, validateProjectUpdate ], (req, res) => {
+projectRouter.put('/:projectId', [ validateProjectId, validateProjectUpdate ], (req, res) => {
 	Project.update(req.params.projectId, req.body)
 		.then((updatedProject) => {
 			if (!updatedProject) return res.status(404).json({ error: 'Project id is not found' });
@@ -59,7 +51,7 @@ router.put('/:projectId', [ validateProjectId, validateProjectUpdate ], (req, re
 });
 
 //Add a new project
-router.post('/', validateProjectContent, (req, res) => {
+projectRouter.post('/', validateProjectContent, (req, res) => {
 	Project.insert(req.body)
 		.then((project) => {
 			res.status(201).json(project);
@@ -70,7 +62,7 @@ router.post('/', validateProjectContent, (req, res) => {
 });
 
 //Delete a project
-router.delete('/:projectId', validateProjectId, (req, res) => {
+projectRouter.delete('/:projectId', validateProjectId, (req, res) => {
 	Project.remove(req.params.projectId)
 		.then((count) => {
 			if (!count) return res.status(404).json({ error: 'Project id is not found' });
@@ -81,7 +73,7 @@ router.delete('/:projectId', validateProjectId, (req, res) => {
 		});
 });
 
-router.get('/:projectId/actions', validateProjectId, (req, res) => {
+projectRouter.get('/:projectId/actions', validateProjectId, (req, res) => {
 	Project.get(req.params.projectId)
 		.then((project) => {
 			if (!project) 
@@ -97,7 +89,7 @@ router.get('/:projectId/actions', validateProjectId, (req, res) => {
 
 //project_id MUST be part of the body, which seems strange?
 //I must include the project_id in order to add a new action for a project. But that seems strange bc the project_id comes through the url
-router.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res) => {
+projectRouter.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res) => {
 	const projectId = req.params.id 
 	const actionBody = req.body
 	const newAction = {projectId, actionBody}
@@ -118,4 +110,4 @@ router.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, 
 });
 
 
-module.exports = router;
+module.exports = projectRouter;
