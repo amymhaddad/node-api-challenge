@@ -5,40 +5,33 @@ const Action = require('../data/helpers/actionModel');
 const { validateActionId, validateActionUpdate, validateAction, validateActionProjectId } = require('../middlewares/Middleware');
 
 //Get an array of actions
-actionRouter.get('/', (req, res) => {
-	console.log("HERE in actions")
+actionRouter.get('/', (req, res, next) => {
 	Action.get()
 		.then((action) => {
 			return res.status(200).json(action);
 		})
-		.catch((error) => {
-			return res.status(500).json({ message: 'Server error' });
-		});
+		.catch(err => next(err))
 });
 
 //Get specific action
-actionRouter.get('/:actionId', (req, res) => {
-	
+actionRouter.get('/:actionId', validateActionId, (req, res, next) => {
 	Action.get(req.params.actionId)
 		.then((action) => {
 			if (!action) return res.status(404).json({ error: 'Action id is not found.' });
 			return res.status(200).json(action);
 		})
-		.catch((error) => {
-			return res.status(500).json({ message: 'Server error' });
-		});
+		.catch(err => next(err))		 
 });
 
 //Update an action
-actionRouter.put('/:actionId', [ validateActionId, validateActionUpdate ], (req, res) => {
+actionRouter.put('/:actionId', [ validateActionId, validateActionUpdate ], (req, res, next) => {
 	Action.update(req.params.actionId, req.body)
 		.then((updatedAction) => {
-			if (!updatedAction) return res.status(404).json({ error: 'Action id is not found.' });
+			if (!updatedAction) 
+				return res.status(404).json({ error: 'Action id is not found.' });
 			return res.status(201).json(updatedAction);
 		})
-		.catch((error) => {
-			return res.status(500).json({ message: 'Server error' });
-		});
+		.catch(err => next(err))		 
 });
 
 //delete an action
