@@ -6,7 +6,7 @@ const { validateActionId, validateActionUpdate, validateAction, validateActionPr
 
 //Get an array of actions
 router.get('/', (req, res) => {
-	console.log("HERE")
+	console.log("HERE in actions")
 	Action.get()
 		.then((action) => {
 			return res.status(200).json(action);
@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 
 //Get specific action
 router.get('/:actionId', (req, res) => {
-
+	
 	Action.get(req.params.actionId)
 		.then((action) => {
 			if (!action) return res.status(404).json({ error: 'Action id is not found.' });

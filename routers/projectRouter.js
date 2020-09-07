@@ -10,13 +10,19 @@ const {
 	validateAction
 } = require('../middlewares/Middleware');
 
-//Not working and unsure why. I get this response: "error": "Invalid syntax" which means the middleware must be runing on this endpoint, but it shouldt be 
+//Check get() for projects and actions
+//Check endpoint: router.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res) => {
+	//Should this go into the actions file?
+
+
+//Get error when try to hit this endpoint: http://localhost:3000/api/projects
+//http://localhost:3000/api --> goes to actions 
+//However, I can get a single project when I pass in an ID
 //Get all projects
 router.get('/', (req, res) => {
-	console.log("HERE")
+	console.log("HERE asdf")
 	Project.get()
 		.then((projects) => {
-			console.log("HERE")
 			return res.status(200).json(projects);
 		})
 	
@@ -34,13 +40,10 @@ router.get('/:projectId', validateProjectId, (req, res, next) => {
 			if (!project) return res.status(404).json({ error: 'Project id is not found.' });
 				return res.status(200).json(project);
 		})
-		
-		// let err = new Error
-		// err.statusCode = 500
-		// next(err)
-		// .catch((error) => {
-		// 	return res.status(500).json({ error: 'Server Error' });
-		// });
+		.catch((error) => {
+			console.log("err", error)
+			return res.status(500).json({ error: 'Server Error' });
+		});
 });
 
 //Update a project
@@ -95,6 +98,11 @@ router.get('/:projectId/actions', validateProjectId, (req, res) => {
 //project_id MUST be part of the body, which seems strange?
 //I must include the project_id in order to add a new action for a project. But that seems strange bc the project_id comes through the url
 router.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res) => {
+	const projectId = req.params.id 
+	const actionBody = req.body
+	const newAction = {projectId, actionBody}
+	console.log("body", newAction)
+
 	Project.get(req.params.projectId)
 		.then((project) => {
 			if (!project) 
