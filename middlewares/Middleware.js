@@ -21,20 +21,25 @@ function logger(req, res, next) {
 function validateProjectId(req, res, next) {
 	const projectId = req.params.projectId;
 
-	if (isNaN(projectId)) return res.status(400).json({ message: 'Invalid syntax' });
+	if (isNaN(projectId)) {
+		return res.status(400).json({ message: 'Invalid syntax' });
+	}
 	next();
 }
 
 function validateProjectUpdate(req, res, next) {
 	const missingProjectContent = !req.body.name && !req.body.description;
 
-	if (missingProjectContent) return res.status(400).json({ error: 'You need to provide a name or description.' });
+	if (missingProjectContent) {
+		return res.status(400).json({ error: 'You need to provide a name or description.' });
+	}
+	 
 	next();
 }
 
 function validateProjectContent(req, res, next) {
+	console.log("MISSING", req)
 	const missingProjectContent = !req.body.name && !req.body.description;
-
 	if (missingProjectContent) {
 		return res.status(400).json({ error: 'You need to provide a name and description.' });
 	}
@@ -76,5 +81,6 @@ function validateActionUpdate(req, res, next) {
 
 
 function handleErrors(err, req, res, next) {
+	console.log("HERE IN HANDLE ERROS", err)
 	return res.status(500).json({ error: "Server error"})
 }

@@ -1,16 +1,16 @@
 const express = require('express');
 const app = express();
-const apiRouter = require('./routers/apiRouter')
+const router = require('./routers/apiRouter')
 const {handleErrors} = require('./middlewares/Middleware')
 
 const port = 3000;
 
 
 const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({ extended: true }));
-router.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-app.use('/api', apiRouter)
+app.use('/api', router)
 app.use(handleErrors)
 
 
@@ -19,4 +19,5 @@ app.listen(port, () => {
 });
 
 
- 
+//watch naming
+//I create an instance of app in this index file. I need to apply the .use() functions to this instance

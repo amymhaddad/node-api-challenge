@@ -31,41 +31,35 @@ projectRouter.get('/:projectId', validateProjectId, (req, res, next) => {
 });
 
 //Update a project
-projectRouter.put('/:projectId', [ validateProjectId, validateProjectUpdate ], (req, res) => {
+projectRouter.put('/:projectId', [ validateProjectId, validateProjectUpdate ], (req, res, next) => {
 	Project.update(req.params.projectId, req.body)
 		.then((updatedProject) => {
 			if (!updatedProject) return res.status(404).json({ error: 'Project id is not found' });
 			return res.status(201).json(updatedProject);
 		})
-		.catch((err) => {
-			return res.status(500).json({ error: 'Server Error' });
-		});
+		.catch(err => next(err))
 });
 
 //Add a new project
-projectRouter.post('/', validateProjectContent, (req, res) => {
+projectRouter.post('/', validateProjectContent, (req, res, next) => {
 	Project.insert(req.body)
 		.then((project) => {
 			res.status(201).json(project);
 		})
-		.catch((err) => {
-			return res.status(500).json({ error: 'Server error ' });
-		});
+		.catch(err => next(err))
 });
 
 //Delete a project
-projectRouter.delete('/:projectId', validateProjectId, (req, res) => {
+projectRouter.delete('/:projectId', validateProjectId, (req, res, next) => {
 	Project.remove(req.params.projectId)
 		.then((count) => {
 			if (!count) return res.status(404).json({ error: 'Project id is not found' });
 			return res.sendStatus(204);
 		})
-		.catch((err) => {
-			return res.status(500).json({ error: 'Server error ' });
-		});
+		.catch(err => next(err))
 });
 
-projectRouter.get('/:projectId/actions', validateProjectId, (req, res) => {
+projectRouter.get('/:projectId/actions', validateProjectId, (req, res, next) => {
 	Project.get(req.params.projectId)
 		.then((project) => {
 			if (!project) 
@@ -74,14 +68,12 @@ projectRouter.get('/:projectId/actions', validateProjectId, (req, res) => {
 				res.status(200).json(actions);
 			});
 		})
-		.catch((err) => {
-			return res.status(500).json({ error: 'Server error ' });
-		});
+		.catch(err => next(err))
 });
 
 //project_id MUST be part of the body, which seems strange?
 //I must include the project_id in order to add a new action for a project. But that seems strange bc the project_id comes through the url
-projectRouter.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res) => {
+projectRouter.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res, next) => {
 	const projectId = req.params.id 
 	const actionBody = req.body
 	const newAction = {projectId, actionBody}
@@ -96,9 +88,7 @@ projectRouter.post('/:projectId/actions', [ validateProjectId, validateAction ],
 				return res.status(201).json(action);
 			});
 		})
-		.catch((error) => {
-			return res.status(500).json({ message: 'Server error' });
-		});
+		.catch(err => next(err))
 });
 
 

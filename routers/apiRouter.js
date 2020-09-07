@@ -1,10 +1,11 @@
 const express = require('express');
 router = express.Router();
 
-//added handleError from MW
+
 const { logger } = require('../middlewares/Middleware');
 router.use(logger);
 
+//Note: the project and action routers are specifically named to prevent naming conflicts
 const projectRouter = require('./projectRouter');
 const actionRouter = require('./actionRouter');
 
