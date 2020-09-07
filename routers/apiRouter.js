@@ -12,9 +12,5 @@ router.use('/projects', projectRouter);
 router.use('/actions', actionRouter);
 
 
-//Added use of handleError
-// router.use(handleErrors)
-
-
 module.exports = router 
 

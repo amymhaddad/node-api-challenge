@@ -18,24 +18,16 @@ projectRouter.get('/', (req, res, next) => {
 			return res.status(200).json(projects);
 		})
 		.catch(err => next(err))
-		// .catch((error) => {
-		// 	console.log("ERR", error)
-		// 	return res.status(500).json({ error: 'Server Error' });
-		// });
 });
 
 //Get a particular project
 projectRouter.get('/:projectId', validateProjectId, (req, res, next) => {
-	console.log("HERE in second endpoint")
 	Project.get(req.params.projectId)
 		.then((project) => {
 			if (!project) return res.status(404).json({ error: 'Project id is not found.' });
 				return res.status(200).json(project);
 		})
-		.catch((error) => {
-			console.log("err", error)
-			return res.status(500).json({ error: 'Server Error' });
-		});
+		.catch(err => next(err))
 });
 
 //Update a project
