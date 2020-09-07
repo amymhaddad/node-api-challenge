@@ -64,7 +64,7 @@ function validateActionId(req, res, next) {
 
 function validateActionProjectId(req, res, next) {
 	const actionProjectId = req.body.project_id
-
+	console.log("IN validateProjectId", actionProjectId)
 	if (isNaN(actionProjectId)) 
 		return res.status(404).json({ error: 'Invalid syntax validate action project id' });
 	next();

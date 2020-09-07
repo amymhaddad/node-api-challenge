@@ -71,19 +71,16 @@ projectRouter.get('/:projectId/actions', validateProjectId, (req, res, next) => 
 		.catch(err => next(err))
 });
 
-//project_id MUST be part of the body, which seems strange?
-//I must include the project_id in order to add a new action for a project. But that seems strange bc the project_id comes through the url
-projectRouter.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res, next) => {
-	const projectId = req.params.id 
-	const actionBody = req.body
-	const newAction = {projectId, actionBody}
-	console.log("body", newAction)
 
-	Project.get(req.params.projectId)
+projectRouter.post('/:projectId/actions', [ validateProjectId, validateAction ], (req, res, next) => {
+	const projectId = req.params.projectId
+	const newAction = req.body
+	
+	Project.get(projectId)
 		.then((project) => {
 			if (!project) 
 				return res.status(404).json({ error: 'Project id is not found' });
-			Action.insert(req.body, req.params.projectId)
+			Action.insert(newAction)
 				.then((action) => {
 				return res.status(201).json(action);
 			});
