@@ -35,27 +35,25 @@ actionRouter.put('/:actionId', [ validateActionId, validateActionUpdate ], (req,
 });
 
 //delete an action
-actionRouter.delete('/:actionId', validateActionId, (req, res) => {
+actionRouter.delete('/:actionId', validateActionId, (req, res, next) => {
 	Action.remove(req.params.actionId)
 		.then((count) => {
 			if (!count) 
 				return res.status(404).json({ error: 'Action id is not found.' });
 			return res.status(204).json('removed');
 		})
-		.catch((error) => {
-			return res.status(500).json({ message: 'Server error' });
-		});
+		.catch(err => next(err))		 
 });
 
-actionRouter.post('/', [validateActionProjectId, validateAction], (req, res) => {
-	//Req's of action table: project_id, notes, descrition
-	//SO first, I see if the project_id exists in DB
-	//THEN I insert the body of the req into the actions table
-	Action.get(req.body.project_id)
-	.then(action => {
-		if (!action) {
-			return res.status(404).json({ error: 'Action id is not found.' });
-		}
+//There's no need to do Action.get(id)? I get an error if I use this
+actionRouter.post('/', [validateAction], (req, res) => {
+	console.log("body", req.body.project_id)
+	// Action.get(req.body.project_id)
+	// .then(action => {
+	// 	console.log("IN action", action)
+	// 	if (!action) {
+	// 		return res.status(404).json({ error: 'Action id is not found.' });
+	// 	}
 		Action.insert(req.body)
 		.then(newAction => {
 			return res.status(201).json(newAction)
@@ -65,7 +63,7 @@ actionRouter.post('/', [validateActionProjectId, validateAction], (req, res) => 
 		console.log("err", error)
 		return res.status(500).json({ message: 'Server error' });
 	});
-	})
+	// })
 
 });
 
