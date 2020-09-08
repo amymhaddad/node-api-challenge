@@ -33,7 +33,6 @@ function validateProjectUpdate(req, res, next) {
 	if (missingProjectContent) {
 		return res.status(400).json({ error: 'You need to provide a name or description.' });
 	}
-	 
 	next();
 }
 
@@ -55,6 +54,7 @@ function validateAction(req, res, next) {
 
 function validateActionId(req, res, next) {
 	const actionId = req.params.actionId;
+	
 	if (isNaN(actionId)) 
 		return res.status(404).json({ error: 'Invalid syntax validate action id' });
 	next();
@@ -62,6 +62,7 @@ function validateActionId(req, res, next) {
 
 function validateActionProjectId(req, res, next) {
 	const actionProjectId = req.body.project_id
+	
 	if (isNaN(actionProjectId)) 
 		return res.status(404).json({ error: 'Invalid syntax validate action project id' });
 	next();
@@ -76,8 +77,6 @@ function validateActionUpdate(req, res, next) {
 	next();
 }
 
-
 function handleErrors(err, req, res, next) {
-	console.log("HERE IN HANDLE ERROS", err)
 	return res.status(500).json({ error: "Server error"})
 }

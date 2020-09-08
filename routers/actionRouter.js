@@ -2,7 +2,7 @@ const express = require('express');
 const actionRouter = express.Router();
 
 const Action = require('../data/helpers/actionModel');
-const { validateActionId, validateActionUpdate, validateAction, validateActionProjectId } = require('../middlewares/Middleware');
+const { validateActionId, validateActionUpdate, validateAction } = require('../middlewares/Middleware');
 
 //Get an array of actions
 actionRouter.get('/', (req, res, next) => {
@@ -17,7 +17,8 @@ actionRouter.get('/', (req, res, next) => {
 actionRouter.get('/:actionId', validateActionId, (req, res, next) => {
 	Action.get(req.params.actionId)
 		.then((action) => {
-			if (!action) return res.status(404).json({ error: 'Action id is not found.' });
+			if (!action) 
+				return res.status(404).json({ error: 'Action id is not found.' });
 			return res.status(200).json(action);
 		})
 		.catch(err => next(err))		 
@@ -34,7 +35,7 @@ actionRouter.put('/:actionId', [ validateActionId, validateActionUpdate ], (req,
 		.catch(err => next(err))		 
 });
 
-//delete an action
+//Delete an action
 actionRouter.delete('/:actionId', validateActionId, (req, res, next) => {
 	Action.remove(req.params.actionId)
 		.then((count) => {
@@ -45,26 +46,13 @@ actionRouter.delete('/:actionId', validateActionId, (req, res, next) => {
 		.catch(err => next(err))		 
 });
 
-//There's no need to do Action.get(id)? I get an error if I use this
-actionRouter.post('/', [validateAction], (req, res) => {
-	console.log("body", req.body.project_id)
-	// Action.get(req.body.project_id)
-	// .then(action => {
-	// 	console.log("IN action", action)
-	// 	if (!action) {
-	// 		return res.status(404).json({ error: 'Action id is not found.' });
-	// 	}
+//Add a new action
+actionRouter.post('/', validateAction, (req, res) => {
 		Action.insert(req.body)
 		.then(newAction => {
 			return res.status(201).json(newAction)
 		})
-
-	.catch((error) => {
-		console.log("err", error)
-		return res.status(500).json({ message: 'Server error' });
-	});
-	// })
-
+		.catch(err => next(err))		 
 });
 
 module.exports = actionRouter;
